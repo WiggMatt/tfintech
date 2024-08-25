@@ -37,4 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### properties-dev ###
+/translation/src/main/resources/application-dev.properties
 
+### logs ###
+*.log
