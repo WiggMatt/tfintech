@@ -1,17 +1,32 @@
 package ru.matthew;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+public class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] args) {
+        CityParser cityParser = new CityParser();
+
+        logger.info("Тестирование обработки файла с ошибками");
+        City cityError = cityParser.parseCityJson("city-error.json");
+
+        if (cityError == null) {
+            logger.info("Обработка файла с ошибками завершена. Объект City не создан.");
+        } else {
+            logger.info("Объект City успешно создан из файла с ошибками. Это не должно произойти.");
+        }
+
+        logger.info("Тестирование обработки корректного JSON файла");
+        City city = cityParser.parseCityJson("city.json");
+
+        if (city != null) {
+            String xmlData = cityParser.toXML(city);
+            if (xmlData != null) {
+                cityParser.saveXMLToFile(xmlData, "city.xml");
+            }
         }
     }
 }
+
