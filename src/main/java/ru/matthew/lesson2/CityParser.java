@@ -1,4 +1,4 @@
-package ru.matthew;
+package ru.matthew.lesson2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
