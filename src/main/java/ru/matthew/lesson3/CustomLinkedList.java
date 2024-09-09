@@ -1,7 +1,5 @@
 package ru.matthew.lesson3;
 
-import lombok.Getter;
-
 import java.util.Collection;
 
 public class CustomLinkedList<E> implements MyCollection<E> {
@@ -37,9 +35,7 @@ public class CustomLinkedList<E> implements MyCollection<E> {
     // Добавление элемента в конец списка
     @Override
     public void add(E data) {
-        if (data == null) {
-            throw new NullPointerException("Невозможно добавить null в список");
-        }
+        checkNullPointer(data);
         Node<E> newNode = new Node<>(data, tail, null);
         if (tail != null) {
             tail.next = newNode;
@@ -56,6 +52,7 @@ public class CustomLinkedList<E> implements MyCollection<E> {
         if (index == size) {
             add(data);
         } else {
+            checkNullPointer(data);
             checkIndexBound(index);
             Node<E> nodeAtIndex = getNode(index);
             Node<E> newNode = new Node<>(data, nodeAtIndex.prev, nodeAtIndex);
@@ -78,6 +75,9 @@ public class CustomLinkedList<E> implements MyCollection<E> {
 
     @Override
     public boolean contains(E data) {
+        if (data == null) {
+            return false;
+        }
         Node<E> current = head;
         while (current != null) {
             if (current.data.equals(data)) {
@@ -93,7 +93,39 @@ public class CustomLinkedList<E> implements MyCollection<E> {
         checkIndexBound(index);
         Node<E> nodeToRemove = getNode(index);
         unlink(nodeToRemove);
-        size--;
+    }
+
+    // Добавление всех элементов из переданной коллекции в конец списка
+    @Override
+    public void addAll(Collection<? extends E> collection) {
+        if (collection == null) {
+            throw new NullPointerException("Список не может быть равен null");
+        }
+        for (E data : collection) {
+            add(data);
+        }
+    }
+
+    // Получение размера списка
+    @Override
+    public int size() {
+        return size;
+    }
+
+    // Проверка пустой ли список
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // Получение головы списка
+    public E getHead() {
+        return isEmpty() ? null : head.data;
+    }
+
+    // Получение хвоста списка
+    public E getTail() {
+        return isEmpty() ? null : tail.data;
     }
 
     private void unlink(Node<E> node) {
@@ -108,16 +140,14 @@ public class CustomLinkedList<E> implements MyCollection<E> {
         } else {
             tail = node.prev;
         }
+        size--;
     }
 
-    // Получение узла по индексу
     private Node<E> getNode(int index) {
-        checkIndexBound(index);
         Node<E> current;
         if (index < size / 2) {
             current = head;
             for (int i = 1; i < index; i++) {
-
                 current = current.next;
             }
         } else {
@@ -129,38 +159,17 @@ public class CustomLinkedList<E> implements MyCollection<E> {
         return current;
     }
 
-    // Добавление всех элементов из переданной коллекции в конец списка
-    @Override
-    public void addAll(Collection<? extends E> collection) {
-        for (E data : collection) {
-            add(data);
-        }
-    }
-
     // Проверка корректности индекса
     private void checkIndexBound(int index) {
-        if (index < 0 || index > size) {
+        if (index <= 0 || index > size) {
             throw new IndexOutOfBoundsException("Индекс: " + index + ", Размер массива: " + size);
         }
     }
 
-    // Получение размера списка
-    @Override
-    public int size() {
-        return size;
-    }
-
-    public E getHead() {
-        return head.data;
-    }
-
-    public E getTail() {
-        return tail.data;
-    }
-
-    // Проверка, пуст ли список
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
+    // Проверка на null
+    private void checkNullPointer(E data) {
+        if (data == null) {
+            throw new NullPointerException("Невозможно добавить null в список");
+        }
     }
 }
