@@ -1,8 +1,10 @@
 package ru.matthew.lesson3;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class CustomLinkedList<E> implements MyCollection<E> {
+public class CustomLinkedList<E> implements MyCollection<E>{
     private static class Node<E> {
         E data;
         Node<E> next;
@@ -97,13 +99,11 @@ public class CustomLinkedList<E> implements MyCollection<E> {
 
     // Добавление всех элементов из переданной коллекции в конец списка
     @Override
-    public void addAll(Collection<? extends E> collection) {
+    public void addAll(Iterable<? extends E> collection) {
         if (collection == null) {
             throw new NullPointerException("Список не может быть равен null");
         }
-        for (E data : collection) {
-            add(data);
-        }
+        for (E data : collection) add(data);
     }
 
     // Получение размера списка
@@ -116,6 +116,29 @@ public class CustomLinkedList<E> implements MyCollection<E> {
     @Override
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    // Реализация метода iterator
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<>() {
+            private Node<E> current = head;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                E data = current.data;
+                current = current.next;
+                return data;
+            }
+        };
     }
 
     // Получение головы списка
@@ -147,12 +170,12 @@ public class CustomLinkedList<E> implements MyCollection<E> {
         Node<E> current;
         if (index < size / 2) {
             current = head;
-            for (int i = 1; i < index; i++) {
+            for (int i = 0; i < index; i++) {
                 current = current.next;
             }
         } else {
             current = tail;
-            for (int i = size; i > index; i--) {
+            for (int i = size - 1; i > index; i--) {
                 current = current.prev;
             }
         }
@@ -161,7 +184,7 @@ public class CustomLinkedList<E> implements MyCollection<E> {
 
     // Проверка корректности индекса
     private void checkIndexBound(int index) {
-        if (index <= 0 || index > size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Индекс: " + index + ", Размер массива: " + size);
         }
     }

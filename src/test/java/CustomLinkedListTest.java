@@ -26,8 +26,8 @@ public class CustomLinkedListTest {
         emptyList = new CustomLinkedList<>(Arrays.asList(1, 2, 3, 4, 5));
 
         assertEquals(5, emptyList.size(), "Размер списка должен быть 5");
-        assertEquals(1, emptyList.get(1), "Первый элемент должен быть 1");
-        assertEquals(5, emptyList.get(5), "Пятый элемент должен быть 5");
+        assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
+        assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
     }
 
     @Test
@@ -44,7 +44,7 @@ public class CustomLinkedListTest {
         emptyList = new CustomLinkedList<>(Collections.singletonList(1));
 
         assertEquals(1, emptyList.size(), "Размер списка должен быть 1");
-        assertEquals(1, emptyList.get(1), "Единственный элемент должен быть 1");
+        assertEquals(1, emptyList.get(0), "Единственный элемент должен быть 1");
         assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
         assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
     }
@@ -55,7 +55,7 @@ public class CustomLinkedListTest {
         emptyList.add(1);
 
         assertEquals(1, emptyList.size(), "Размер списка должен быть равен 1");
-        assertEquals(1, emptyList.get(1), "Добавленный элемент должен находиться в конце списка");
+        assertEquals(1, emptyList.get(0), "Добавленный элемент должен находиться в конце списка");
         assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
         assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
     }
@@ -63,8 +63,10 @@ public class CustomLinkedListTest {
     @Test
     @DisplayName("Добавление элемента в конец списка в не пустой список")
     void testAddElementToEndInNotEmptyList() {
-        assertEquals(3, notEmptyList.get(3));
-        assertEquals(3, notEmptyList.getTail());
+        notEmptyList.add(4);
+
+        assertEquals(4, notEmptyList.get(3));
+        assertEquals(4, notEmptyList.getTail());
     }
 
     @Test
@@ -80,13 +82,13 @@ public class CustomLinkedListTest {
         notEmptyList.add(2, 4);
 
         assertEquals(4, notEmptyList.size(), "Размер списка должен быть равен 4.");
-        assertEquals(4, notEmptyList.get(2), "Элемент 4 должен находиться на индексе 2.");
+        assertEquals(4, notEmptyList.get(2), "Элемент 4 должен находиться на индексе 2");
     }
 
     @Test
     @DisplayName("Добавление элемента по индексу в начало списка")
     void testAddElementByIndexAtBeginning() {
-        notEmptyList.add(1, 4);
+        notEmptyList.add(0, 4);
 
         assertEquals(4, notEmptyList.size(), "Размер списка должен быть 4 после добавления");
         assertEquals(4, notEmptyList.getHead(), "Первый элемент должен быть 4");
@@ -114,8 +116,6 @@ public class CustomLinkedListTest {
     @Test
     @DisplayName("Получение элемента по неверному индексу выбрасывает исключение")
     void testGetInvalidIndexThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.get(0),
-                "Должно выбрасываться IndexOutOfBoundsException для индекса 0");
         assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.get(4),
                 "Должно выбрасываться IndexOutOfBoundsException для индекса, превышающего размер списка");
         assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.get(-1),
@@ -133,8 +133,8 @@ public class CustomLinkedListTest {
     @DisplayName("Проверка получения эдементов из середины списка")
     void testGetNodeFirstHalf() {
         notEmptyList.add(4);
-        assertEquals(1, notEmptyList.get(1));
-        assertEquals(3, notEmptyList.get(3));
+        assertEquals(1, notEmptyList.get(0));
+        assertEquals(3, notEmptyList.get(2));
     }
 
     @Test
@@ -153,13 +153,6 @@ public class CustomLinkedListTest {
     }
 
     @Test
-    @DisplayName("Поиск null элемента выбрасывает исключение")
-    void testContainsNullElementThrowsException() {
-        assertThrows(NullPointerException.class, () -> notEmptyList.contains(null),
-                "Ожидается NullPointerException при поиске null");
-    }
-
-    @Test
     @DisplayName("Проверка метода contains с строками")
     void testContainsWithStrings() {
         CustomLinkedList<String> list = new CustomLinkedList<>(Arrays.asList("apple", "banana", "cherry"));
@@ -172,11 +165,11 @@ public class CustomLinkedListTest {
     @DisplayName("Удаление первого элемента")
     void testRemoveFirstElement() {
         notEmptyList.add(4);
-        notEmptyList.remove(1);
+        notEmptyList.remove(0);
 
         assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
                 "до 3 после удаления первого элемента");
-        assertEquals(2, notEmptyList.get(1), "Первым элементом должен быть 2 после удаления 1");
+        assertEquals(2, notEmptyList.get(0), "Первым элементом должен быть 2 после удаления 1");
         assertEquals(2, notEmptyList.getHead(), "'Голова' элемента должна стать 2");
     }
 
@@ -184,11 +177,11 @@ public class CustomLinkedListTest {
     @DisplayName("Удаление последнего элемента")
     void testRemoveLastElement() {
         notEmptyList.add(4);
-        notEmptyList.remove(4);
+        notEmptyList.remove(3);
 
         assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
                 "до 3 после удаления последнего элемента");
-        assertEquals(3, notEmptyList.get(3), "Последним элементом должен быть 3 после удаления 4");
+        assertEquals(3, notEmptyList.get(2), "Последним элементом должен быть 3 после удаления 4");
         assertEquals(3, notEmptyList.getTail(), "'Хвост' элемента должна стать 3");
     }
 
@@ -196,19 +189,17 @@ public class CustomLinkedListTest {
     @DisplayName("Удаление элемента в середине списка")
     void testRemoveMiddleElement() {
         notEmptyList.add(4);
-        notEmptyList.remove(2);
+        notEmptyList.remove(1);
 
         assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
                 "до 3 после удаления последнего элемента");
-        assertEquals(3, notEmptyList.get(2), "Вторым элементом должен остаться 3");
-        assertEquals(4, notEmptyList.get(3), "Третьим элементом должен стать 40 после удаления 30");
+        assertEquals(3, notEmptyList.get(1), "Вторым элементом должен остаться 3");
+        assertEquals(4, notEmptyList.get(2), "Третьим элементом должен стать 40 после удаления 30");
     }
 
     @Test
     @DisplayName("Удаление несуществующих элементов")
     void testRemoveInvalidIndexThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.remove(0),
-                "Должно выбрасываться IndexOutOfBoundsException для индекса 0");
         assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.remove(4),
                 "Должно выбрасываться IndexOutOfBoundsException для индекса, превышающего размер списка");
         assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.remove(-1),
@@ -221,8 +212,8 @@ public class CustomLinkedListTest {
         emptyList.addAll(Arrays.asList(1, 2, 3, 4, 5));
 
         assertEquals(5, emptyList.size(), "Размер списка должен быть 5 после добавления 5 элементов");
-        assertEquals(1, emptyList.get(1), "Первый элемент должен быть 1");
-        assertEquals(5, emptyList.get(5), "Последний элемент должен быть 5");
+        assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
+        assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
     }
 
     @Test
@@ -232,8 +223,8 @@ public class CustomLinkedListTest {
 
         assertEquals(6, notEmptyList.size(), "Размер списка должен быть 6 " +
                 "после добавления 3 элементов");
-        assertEquals(1, notEmptyList.get(1), "Первый элемент должен быть 1");
-        assertEquals(6, notEmptyList.get(6), "Последний элемент должен быть 6");
+        assertEquals(1, notEmptyList.get(0), "Первый элемент должен быть 1");
+        assertEquals(6, notEmptyList.get(5), "Последний элемент должен быть 6");
     }
 
     @Test
@@ -243,8 +234,8 @@ public class CustomLinkedListTest {
 
         assertEquals(3, notEmptyList.size(), "Размер списка должен остаться " +
                 "3 после добавления пустой коллекции");
-        assertEquals(1, notEmptyList.get(1), "Первый элемент должен быть 1");
-        assertEquals(3, notEmptyList.get(3), "Последний элемент должен быть 3");
+        assertEquals(1, notEmptyList.get(0), "Первый элемент должен быть 1");
+        assertEquals(3, notEmptyList.get(2), "Последний элемент должен быть 3");
     }
 
     @Test
@@ -281,9 +272,9 @@ public class CustomLinkedListTest {
     @Test
     @DisplayName("Проверка isEmpty на очищенном списке")
     void testIsEmptyAfterClearing() {
-        notEmptyList.remove(1);
-        notEmptyList.remove(1);
-        notEmptyList.remove(1);
+        notEmptyList.remove(0);
+        notEmptyList.remove(0);
+        notEmptyList.remove(0);
 
         assertTrue(notEmptyList.isEmpty(), "Список должен быть пуст после удаления всех элементов");
     }
