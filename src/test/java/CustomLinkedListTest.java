@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ru.matthew.lesson3.CustomLinkedList;
 
@@ -8,274 +9,266 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@DisplayName("Тестирование CustomLinkedList")
 public class CustomLinkedListTest {
-    private CustomLinkedList<Integer> notEmptyList;
-    private CustomLinkedList<Integer> emptyList;
 
+    @Nested
+    @DisplayName("Когда список пустой")
+    class WhenListIsEmpty {
 
-    @BeforeEach
-    void setUp() {
-        notEmptyList = new CustomLinkedList<>(Arrays.asList(1, 2, 3));
-        emptyList = new CustomLinkedList<>();
+        private CustomLinkedList<Integer> emptyList;
+
+        @BeforeEach
+        void setUp() {
+            emptyList = new CustomLinkedList<>();
+        }
+
+        @Test
+        @DisplayName("Конструктор с коллекцией элементов")
+        void testConstructorWithCollection() {
+            emptyList = new CustomLinkedList<>(Arrays.asList(1, 2, 3, 4, 5));
+
+            assertEquals(5, emptyList.size(), "Размер списка должен быть 5");
+            assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
+            assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
+        }
+
+        @Test
+        @DisplayName("Размер списка должен быть 0")
+        void testSize() {
+            assertEquals(0, emptyList.size(), "Размер пустого списка должен быть 0");
+        }
+
+        @Test
+        @DisplayName("Список должен быть пустым")
+        void testIsEmpty() {
+            assertTrue(emptyList.isEmpty(), "Список должен быть пустым");
+        }
+
+        @Test
+        @DisplayName("Добавление элемента в пустой список")
+        void testAddElementToEmptyList() {
+            emptyList.add(1);
+            assertEquals(1, emptyList.size(), "Размер списка должен стать 1 после добавления элемента");
+            assertEquals(1, emptyList.get(0), "Добавленный элемент должен быть первым в списке");
+            assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
+            assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
+        }
+
+        @Test
+        @DisplayName("Попытка удаления элемента из пустого списка должна выбросить исключение")
+        void testRemoveFromEmptyListThrowsException() {
+            assertThrows(IndexOutOfBoundsException.class, () -> emptyList.remove(0),
+                    "Удаление элемента из пустого списка должно выбрасывать IndexOutOfBoundsException");
+        }
+
+        @Test
+        @DisplayName("Метод contains для пустого списка всегда должен возвращать false")
+        void testContainsOnEmptyList() {
+            assertFalse(emptyList.contains(1), "Метод contains должен возвращать false для пустого списка");
+        }
+
+        @Test
+        @DisplayName("Попытка доступа к элементу по индексу в пустом списке должна выбросить исключение")
+        void testGetFromEmptyListThrowsException() {
+            assertThrows(IndexOutOfBoundsException.class, () -> emptyList.get(0),
+                    "Получение элемента из пустого списка должно выбрасывать IndexOutOfBoundsException");
+        }
+
+        @Test
+        @DisplayName("Добавление всех элементов в пустой список")
+        void testAddAllToEmptyList() {
+            emptyList.addAll(Arrays.asList(1, 2, 3));
+            assertEquals(3, emptyList.size(), "Размер списка должен быть 3 после добавления всех элементов");
+            assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
+            assertEquals(2, emptyList.get(1), "Второй элемент должен быть 2");
+            assertEquals(3, emptyList.get(2), "Третий элемент должен быть 3");
+        }
     }
 
-    @Test
-    @DisplayName("Конструктор с коллекцией элементов")
-    void testConstructorWithCollection() {
-        emptyList = new CustomLinkedList<>(Arrays.asList(1, 2, 3, 4, 5));
+    @Nested
+    @DisplayName("Когда список содержит элементы")
+    class WhenListHasElements {
 
-        assertEquals(5, emptyList.size(), "Размер списка должен быть 5");
-        assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
-        assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
+        private CustomLinkedList<Integer> listWithElements;
+
+        @BeforeEach
+        void setUp() {
+            listWithElements = new CustomLinkedList<>(Arrays.asList(1, 2, 3));
+        }
+
+        @Test
+        @DisplayName("Размер списка должен быть корректным")
+        void testSize() {
+            assertEquals(3, listWithElements.size(), "Размер списка должен быть 3");
+        }
+
+        @Test
+        @DisplayName("Список не должен быть пустым")
+        void testIsNotEmpty() {
+            assertFalse(listWithElements.isEmpty(), "Список не должен быть пустым");
+        }
+
+        @Test
+        @DisplayName("Добавление элемента в конец списка")
+        void testAddElement() {
+            listWithElements.add(4);
+            assertEquals(4, listWithElements.size(), "Размер списка должен увеличиться до 4");
+            assertEquals(4, listWithElements.get(3), "Последним элементом должен стать 4");
+            assertEquals(4, listWithElements.getTail());
+        }
+
+        @Test
+        @DisplayName("Добавление элемента по индексу")
+        void testAddElementByIndex() {
+            listWithElements.add(2, 4);
+
+            assertEquals(4, listWithElements.size(), "Размер списка должен быть равен 4.");
+            assertEquals(4, listWithElements.get(2), "Элемент 4 должен находиться на индексе 2");
+        }
+
+        @Test
+        @DisplayName("Добавление элемента по индексу в начало списка")
+        void testAddElementByIndexAtBeginning() {
+            listWithElements.add(0, 4);
+
+            assertEquals(4, listWithElements.size(), "Размер списка должен быть 4 после добавления");
+            assertEquals(4, listWithElements.getHead(), "Первый элемент должен быть 4");
+
+        }
+
+        @Test
+        @DisplayName("Добавление элемента по неверному индексу выбрасывает исключение")
+        void testAddInvalidIndexThrowsException() {
+            assertThrows(IndexOutOfBoundsException.class, () -> listWithElements.add(-1, 4),
+                    "Должно выбрасываться IndexOutOfBoundsException для отрицательного индекса");
+            assertThrows(IndexOutOfBoundsException.class, () -> listWithElements.add(5, 4),
+                    "Должно выбрасываться IndexOutOfBoundsException, если индекс больше размера списка");
+        }
+
+        @Test
+        @DisplayName("Добавление элемента по индексу в конец списка")
+        void testAddElementByIndexAtEnd() {
+            listWithElements.add(3, 4);
+
+            assertEquals(4, listWithElements.size(), "Размер списка должен быть 4 после добавления");
+            assertEquals(4, listWithElements.getTail(), "Последний элемент должен быть 4");
+        }
+
+        @Test
+        @DisplayName("Удаление элемента по индексу")
+        void testRemoveElementByIndex() {
+            listWithElements.remove(1); // Удаляем элемент "2"
+            assertEquals(2, listWithElements.size(), "Размер списка должен уменьшиться до 2");
+            assertEquals(3, listWithElements.get(1), "Вторым элементом должен стать 3 после удаления");
+        }
+
+        @Test
+        @DisplayName("Удаление первого элемента")
+        void testRemoveFirstElement() {
+            listWithElements.add(4);
+            listWithElements.remove(0);
+
+            assertEquals(3, listWithElements.size(), "Размер списка должен уменьшиться " +
+                    "до 3 после удаления первого элемента");
+            assertEquals(2, listWithElements.get(0), "Первым элементом должен быть 2 после удаления 1");
+            assertEquals(2, listWithElements.getHead(), "'Голова' элемента должна стать 2");
+        }
+
+        @Test
+        @DisplayName("Удаление последнего элемента")
+        void testRemoveLastElement() {
+            listWithElements.add(4);
+            listWithElements.remove(3);
+
+            assertEquals(3, listWithElements.size(), "Размер списка должен уменьшиться " +
+                    "до 3 после удаления последнего элемента");
+            assertEquals(3, listWithElements.get(2), "Последним элементом должен быть 3 после удаления 4");
+            assertEquals(3, listWithElements.getTail(), "'Хвост' элемента должна стать 3");
+        }
+
+        @Test
+        @DisplayName("Список содержит добавленный элемент")
+        void testContainsElement() {
+            assertTrue(listWithElements.contains(2), "Список должен содержать элемент 2");
+        }
+
+        @Test
+        @DisplayName("Список не содержит элемент")
+        void testDoesNotContainElement() {
+            assertFalse(listWithElements.contains(5), "Список не должен содержать элемент 5");
+        }
+
+        @Test
+        @DisplayName("Добавление всех элементов в непустой список")
+        void testAddAllToNonEmptyList() {
+            listWithElements.addAll(Arrays.asList(4, 5, 6));
+            assertEquals(6, listWithElements.size(), "Размер списка должен стать 6 после добавления элементов");
+            assertEquals(4, listWithElements.get(3), "Четвертым элементом должен стать 4");
+            assertEquals(5, listWithElements.get(4), "Пятым элементом должен стать 5");
+            assertEquals(6, listWithElements.get(5), "Шестым элементом должен стать 6");
+        }
+
+        @Test
+        @DisplayName("Получение элемента по индексу")
+        void testGetElementByIndex() {
+            assertEquals(1, listWithElements.get(0), "Первый элемент должен быть 1");
+            assertEquals(2, listWithElements.get(1), "Второй элемент должен быть 2");
+            assertEquals(3, listWithElements.get(2), "Третий элемент должен быть 3");
+        }
+
+        @Test
+        @DisplayName("Получение элемента по неверному индексу выбрасывает исключение")
+        void testGetInvalidIndexThrowsException() {
+            assertThrows(IndexOutOfBoundsException.class, () -> listWithElements.get(4),
+                    "Должно выбрасываться IndexOutOfBoundsException для индекса, превышающего размер списка");
+            assertThrows(IndexOutOfBoundsException.class, () -> listWithElements.get(-1),
+                    "Должно выбрасываться IndexOutOfBoundsException для отрицательного индекса");
+        }
     }
 
-    @Test
-    @DisplayName("Конструктор с пустой коллекцией")
-    void testConstructorWithEmptyCollection() {
-        emptyList = new CustomLinkedList<>(Collections.emptyList());
+    @Nested
+    @DisplayName("Когда список содержит один элемент")
+    class WhenListHasOneElement {
 
-        assertEquals(0, emptyList.size(), "Размер списка должен быть 0");
-    }
+        private CustomLinkedList<Integer> singleElementList;
 
-    @Test
-    @DisplayName("Конструктор с одним элементом")
-    void testConstructorWithSingleElement() {
-        emptyList = new CustomLinkedList<>(Collections.singletonList(1));
+        @BeforeEach
+        void setUp() {
+            singleElementList = new CustomLinkedList<>(Collections.singletonList(1));
+        }
 
-        assertEquals(1, emptyList.size(), "Размер списка должен быть 1");
-        assertEquals(1, emptyList.get(0), "Единственный элемент должен быть 1");
-        assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
-        assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
-    }
+        @Test
+        @DisplayName("Размер списка должен быть 1")
+        void testSize() {
+            assertEquals(1, singleElementList.size(), "Размер списка должен быть 1");
+        }
 
-    @Test
-    @DisplayName("Добавление элемента в конец списка в пустой список")
-    void testAddElementToEndInEmptyList() {
-        emptyList.add(1);
+        @Test
+        @DisplayName("Удаление единственного элемента")
+        void testRemoveSingleElement() {
+            singleElementList.remove(0);
+            assertTrue(singleElementList.isEmpty(), "Список должен стать пустым после удаления единственного элемента");
+        }
 
-        assertEquals(1, emptyList.size(), "Размер списка должен быть равен 1");
-        assertEquals(1, emptyList.get(0), "Добавленный элемент должен находиться в конце списка");
-        assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
-        assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
-    }
+        @Test
+        @DisplayName("Список содержит единственный элемент")
+        void testContainsSingleElement() {
+            assertTrue(singleElementList.contains(1), "Список должен содержать элемент 1");
+        }
 
-    @Test
-    @DisplayName("Добавление элемента в конец списка в не пустой список")
-    void testAddElementToEndInNotEmptyList() {
-        notEmptyList.add(4);
+        @Test
+        @DisplayName("Список не содержит других элементов")
+        void testDoesNotContainOtherElements() {
+            assertFalse(singleElementList.contains(2), "Список не должен содержать элемент 2");
+        }
 
-        assertEquals(4, notEmptyList.get(3));
-        assertEquals(4, notEmptyList.getTail());
-    }
-
-    @Test
-    @DisplayName("Добавление null элемента выбрасывает исключение")
-    void testAddNullElementThrowsException() {
-        assertThrows(NullPointerException.class, () -> emptyList.add(null),
-                "Должно выбрасываться NullPointerException при добавлении null");
-    }
-
-    @Test
-    @DisplayName("Добавление элемента по индексу")
-    void testAddElementByIndex() {
-        notEmptyList.add(2, 4);
-
-        assertEquals(4, notEmptyList.size(), "Размер списка должен быть равен 4.");
-        assertEquals(4, notEmptyList.get(2), "Элемент 4 должен находиться на индексе 2");
-    }
-
-    @Test
-    @DisplayName("Добавление элемента по индексу в начало списка")
-    void testAddElementByIndexAtBeginning() {
-        notEmptyList.add(0, 4);
-
-        assertEquals(4, notEmptyList.size(), "Размер списка должен быть 4 после добавления");
-        assertEquals(4, notEmptyList.getHead(), "Первый элемент должен быть 4");
-
-    }
-
-    @Test
-    @DisplayName("Добавление элемента по индексу в конец списка")
-    void testAddElementByIndexAtEnd() {
-        notEmptyList.add(3, 4);
-
-        assertEquals(4, notEmptyList.size(), "Размер списка должен быть 4 после добавления");
-        assertEquals(4, notEmptyList.getTail(), "Последний элемент должен быть 4");
-    }
-
-    @Test
-    @DisplayName("Добавление элемента по неверному индексу выбрасывает исключение")
-    void testAddInvalidIndexThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.add(-1, 4),
-                "Должно выбрасываться IndexOutOfBoundsException для отрицательного индекса");
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.add(5, 4),
-                "Должно выбрасываться IndexOutOfBoundsException, если индекс больше размера списка");
-    }
-
-    @Test
-    @DisplayName("Получение элемента по неверному индексу выбрасывает исключение")
-    void testGetInvalidIndexThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.get(4),
-                "Должно выбрасываться IndexOutOfBoundsException для индекса, превышающего размер списка");
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.get(-1),
-                "Должно выбрасываться IndexOutOfBoundsException для отрицательного индекса");
-    }
-
-    @Test
-    @DisplayName("Получение элемента из пустого списка выбрасывает исключение")
-    void testGetFromEmptyListThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> emptyList.get(1),
-                "Должно выбрасываться IndexOutOfBoundsException при попытке получить элемент из пустого списка");
-    }
-
-    @Test
-    @DisplayName("Проверка получения эдементов из середины списка")
-    void testGetNodeFirstHalf() {
-        notEmptyList.add(4);
-        assertEquals(1, notEmptyList.get(0));
-        assertEquals(3, notEmptyList.get(2));
-    }
-
-    @Test
-    @DisplayName("Список содержит элемент")
-    void testContainsElementExists() {
-        assertTrue(notEmptyList.contains(2), "Список должен содержать элемент 2");
-        assertTrue(notEmptyList.contains(1), "Список должен содержать элемент 1");
-        assertTrue(notEmptyList.contains(3), "Список должен содержать элемент 3");
-    }
-
-    @Test
-    @DisplayName("Список не содержит элемент")
-    void testContainsElementNotExists() {
-        assertFalse(notEmptyList.contains(6), "Список не должен содержать элемент 6");
-        assertFalse(notEmptyList.contains(0), "Список не должен содержать элемент 0");
-    }
-
-    @Test
-    @DisplayName("Проверка метода contains с строками")
-    void testContainsWithStrings() {
-        CustomLinkedList<String> list = new CustomLinkedList<>(Arrays.asList("apple", "banana", "cherry"));
-
-        assertTrue(list.contains("banana"), "Список должен содержать элемент 'banana'");
-        assertFalse(list.contains("grape"), "Список не должен содержать элемент 'grape'");
-    }
-
-    @Test
-    @DisplayName("Удаление первого элемента")
-    void testRemoveFirstElement() {
-        notEmptyList.add(4);
-        notEmptyList.remove(0);
-
-        assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
-                "до 3 после удаления первого элемента");
-        assertEquals(2, notEmptyList.get(0), "Первым элементом должен быть 2 после удаления 1");
-        assertEquals(2, notEmptyList.getHead(), "'Голова' элемента должна стать 2");
-    }
-
-    @Test
-    @DisplayName("Удаление последнего элемента")
-    void testRemoveLastElement() {
-        notEmptyList.add(4);
-        notEmptyList.remove(3);
-
-        assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
-                "до 3 после удаления последнего элемента");
-        assertEquals(3, notEmptyList.get(2), "Последним элементом должен быть 3 после удаления 4");
-        assertEquals(3, notEmptyList.getTail(), "'Хвост' элемента должна стать 3");
-    }
-
-    @Test
-    @DisplayName("Удаление элемента в середине списка")
-    void testRemoveMiddleElement() {
-        notEmptyList.add(4);
-        notEmptyList.remove(1);
-
-        assertEquals(3, notEmptyList.size(), "Размер списка должен уменьшиться " +
-                "до 3 после удаления последнего элемента");
-        assertEquals(3, notEmptyList.get(1), "Вторым элементом должен остаться 3");
-        assertEquals(4, notEmptyList.get(2), "Третьим элементом должен стать 40 после удаления 30");
-    }
-
-    @Test
-    @DisplayName("Удаление несуществующих элементов")
-    void testRemoveInvalidIndexThrowsException() {
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.remove(4),
-                "Должно выбрасываться IndexOutOfBoundsException для индекса, превышающего размер списка");
-        assertThrows(IndexOutOfBoundsException.class, () -> notEmptyList.remove(-1),
-                "Должно выбрасываться IndexOutOfBoundsException для отрицательного индекса");
-    }
-
-    @Test
-    @DisplayName("Добавление коллекции в пустой список")
-    void testAddAllToEmptyList() {
-        emptyList.addAll(Arrays.asList(1, 2, 3, 4, 5));
-
-        assertEquals(5, emptyList.size(), "Размер списка должен быть 5 после добавления 5 элементов");
-        assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
-        assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
-    }
-
-    @Test
-    @DisplayName("Добавление коллекции в не пустой список")
-    void testAddAllToNonEmptyList() {
-        notEmptyList.addAll(Arrays.asList(4, 5, 6));
-
-        assertEquals(6, notEmptyList.size(), "Размер списка должен быть 6 " +
-                "после добавления 3 элементов");
-        assertEquals(1, notEmptyList.get(0), "Первый элемент должен быть 1");
-        assertEquals(6, notEmptyList.get(5), "Последний элемент должен быть 6");
-    }
-
-    @Test
-    @DisplayName("Добавление пустой коллекции в пустой список")
-    void testAddEmptyCollection() {
-        notEmptyList.addAll(Collections.emptyList());
-
-        assertEquals(3, notEmptyList.size(), "Размер списка должен остаться " +
-                "3 после добавления пустой коллекции");
-        assertEquals(1, notEmptyList.get(0), "Первый элемент должен быть 1");
-        assertEquals(3, notEmptyList.get(2), "Последний элемент должен быть 3");
-    }
-
-    @Test
-    @DisplayName("Добавление null в пустой список")
-    void testAddAllWithNullCollectionThrowsException() {
-        assertThrows(NullPointerException.class, () -> notEmptyList.addAll(null),
-                "Ожидалось NullPointerException при добавлении null коллекции");
-    }
-
-    @Test
-    @DisplayName("Проверка размера пустого списка")
-    void testSizeForEmptyList() {
-        assertEquals(0, emptyList.size(), "Размер пустого списка должен быть 0");
-    }
-
-    @Test
-    @DisplayName("Проверка размера не пустого списка")
-    void testSizeForNonEmptyList() {
-        assertEquals(3, notEmptyList.size(), "Размер списка должен быть 3 после инициализации");
-    }
-
-    @Test
-    @DisplayName("Проверка isEmpty на пустом списке")
-    void testIsEmptyForEmptyList() {
-        assertTrue(emptyList.isEmpty(), "Пустой список должен вернуть true");
-    }
-
-    @Test
-    @DisplayName("Проверка isEmpty на не пустом списке")
-    void testIsEmptyForNonEmptyList() {
-        assertFalse(notEmptyList.isEmpty(), "Непустой список должен вернуть false");
-    }
-
-    @Test
-    @DisplayName("Проверка isEmpty на очищенном списке")
-    void testIsEmptyAfterClearing() {
-        notEmptyList.remove(0);
-        notEmptyList.remove(0);
-        notEmptyList.remove(0);
-
-        assertTrue(notEmptyList.isEmpty(), "Список должен быть пуст после удаления всех элементов");
+        @Test
+        @DisplayName("Добавление элемента в список с одним элементом")
+        void testAddElementToSingleElementList() {
+            singleElementList.add(2);
+            assertEquals(2, singleElementList.size(), "Размер списка должен стать 2 после добавления элемента");
+            assertEquals(2, singleElementList.get(1), "Вторым элементом должен стать 2");
+        }
     }
 }
