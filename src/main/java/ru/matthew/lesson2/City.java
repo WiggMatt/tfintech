@@ -1,4 +1,4 @@
-package ru.matthew;
+package ru.matthew.lesson2;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
