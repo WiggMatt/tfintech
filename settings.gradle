@@ -1,1 +1,3 @@
 rootProject.name = 'tfintech'
+include 'spring_application'
+
