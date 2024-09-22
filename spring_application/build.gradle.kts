@@ -13,6 +13,9 @@ repositories {
 
 dependencies {
     implementation(libs.spring.boot)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+
 }
 
 tasks.test {
