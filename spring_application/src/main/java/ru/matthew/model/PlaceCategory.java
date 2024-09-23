@@ -1,5 +1,6 @@
 package ru.matthew.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ public class PlaceCategory implements Identifiable<Integer>{
     private String name;
 
     @Override
+    @JsonIgnore
     public Integer getKey() {
         return id;
     }

@@ -38,9 +38,13 @@ public class LocationsController {
     @PutMapping("/{slug}")
     public ResponseEntity<Location> updateLocation(@PathVariable String slug, @RequestBody Location location) {
         if (kudaGoService.getLocationStore().get(slug).isPresent()) {
-            location.setSlug(slug);
-            kudaGoService.getLocationStore().update(location);
-            return ResponseEntity.ok(location);
+            if (location.getName() == null || location.getSlug() == null) {
+                ResponseEntity.badRequest().build();
+            } else {
+                location.setSlug(slug);
+                kudaGoService.getLocationStore().update(location);
+                return ResponseEntity.ok(location);
+            }
         }
         return ResponseEntity.notFound().build();
     }
