@@ -1,18 +1,22 @@
 package ru.matthew.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.matthew.aspect.Timed;
 import ru.matthew.model.Location;
 import ru.matthew.service.KudaGoService;
 
 import java.util.Collection;
 
+@Timed
 @RestController
 @RequestMapping("/api/v1/locations")
 public class LocationsController {
 
     private final KudaGoService kudaGoService;
 
+    @Autowired
     public LocationsController(KudaGoService kudaGoService) {
         this.kudaGoService = kudaGoService;
     }

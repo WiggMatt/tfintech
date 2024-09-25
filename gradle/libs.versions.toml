@@ -13,3 +13,4 @@ slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 spring-boot = {module = "org.springframework.boot:spring-boot-starter-web"}
+starter-aop = {module = "org.springframework.boot:spring-boot-starter-aop"}

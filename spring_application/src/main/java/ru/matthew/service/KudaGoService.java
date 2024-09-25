@@ -1,14 +1,16 @@
 package ru.matthew.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import ru.matthew.model.PlaceCategory;
+import ru.matthew.aspect.Timed;
 import ru.matthew.model.Location;
+import ru.matthew.model.PlaceCategory;
 import ru.matthew.repository.InMemoryStore;
 
 import java.util.Arrays;
@@ -22,7 +24,8 @@ public class KudaGoService {
     private final InMemoryStore<Integer, PlaceCategory> placeCategoryStore = new InMemoryStore<>();
     private final InMemoryStore<String, Location> locationStore = new InMemoryStore<>();
 
-    @PostConstruct
+    @Timed
+    @EventListener(ContextRefreshedEvent.class)
     public void init() {
         log.info("Начало инициализации данных из KudaGo API");
 

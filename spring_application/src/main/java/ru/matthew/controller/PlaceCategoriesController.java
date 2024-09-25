@@ -2,11 +2,13 @@ package ru.matthew.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.matthew.aspect.Timed;
 import ru.matthew.model.PlaceCategory;
 import ru.matthew.service.KudaGoService;
 
 import java.util.Collection;
 
+@Timed
 @RestController
 @RequestMapping("/api/v1/places/categories")
 public class PlaceCategoriesController {
