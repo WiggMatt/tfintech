@@ -7,8 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.aspect.Timed;
+import ru.matthew.exception.ElementAlreadyExistsException;
+import ru.matthew.exception.ElementWasNotFoundException;
+import ru.matthew.model.Location;
 import ru.matthew.model.PlaceCategory;
-import ru.matthew.service.KudaGoService;
+import ru.matthew.service.PlaceCategoryService;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -20,82 +23,71 @@ import java.util.Optional;
 @Slf4j
 public class PlaceCategoriesController {
 
-    private final KudaGoService kudaGoService;
+    private final PlaceCategoryService placeCategoryService;
 
     @Autowired
-    public PlaceCategoriesController(KudaGoService kudaGoService) {
-        this.kudaGoService = kudaGoService;
+    public PlaceCategoriesController(PlaceCategoryService placeCategoryService) {
+        this.placeCategoryService = placeCategoryService;
     }
 
     @GetMapping
-    public ResponseEntity<Collection<PlaceCategory>> getAllPlaceCategories() {
-        log.debug("Получение всех категорий мест");
-        Collection<PlaceCategory> categories = kudaGoService.getPlaceCategoryStore().getAll();
-        log.info("Успешно получены все категории мест");
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<?> getAllPlaceCategories() {
+        try {
+            log.debug("Получение всех категорий мест");
+            Collection<PlaceCategory> locations = placeCategoryService.getAllPlaceCategories();
+            log.info("Успешно получены все категории мест");
+            return ResponseEntity.ok(locations);
+        } catch (ElementWasNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PlaceCategory> getPlaceCategoryById(@PathVariable int id) {
-        log.debug("Запрос категории места по ID: {}", id);
-        Optional<PlaceCategory> placeCategory = kudaGoService.getPlaceCategoryStore().get(id);
-        if (placeCategory.isPresent()) {
-            log.info("Категория места с ID {} найдена", id);
-            return ResponseEntity.ok(placeCategory.get());
-        } else {
-            log.warn("Категория места с ID {} не найдена", id);
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getPlaceCategoryById(@PathVariable int id) {
+        try {
+            log.debug("Запрос категории места по id: {}", id);
+            Optional<PlaceCategory> location = placeCategoryService.getPlaceCategoryById(id);
+            log.info("Категория места с id {} найдена", id);
+            return ResponseEntity.ok(location);
+        } catch (ElementWasNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PostMapping
     public ResponseEntity<String> createPlaceCategory(@RequestBody PlaceCategory placeCategory) {
-        if (placeCategory.getId() == 0 || placeCategory.getName() == null) {
-            log.error("Ошибка создания категории места: обязательные поля отсутствуют (ID: {}, Name: {})",
-                    placeCategory.getId(), placeCategory.getName());
-            return ResponseEntity.badRequest().body("ID и название обязательны.");
+        try {
+            placeCategoryService.createPlaceCategory(placeCategory);
+            log.info("Категория места с id {} успешно создана", placeCategory.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body("Категория места успешно создана");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ElementAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-
-        Optional<PlaceCategory> existingCategory = kudaGoService.getPlaceCategoryStore().get(placeCategory.getId());
-        if (existingCategory.isPresent()) {
-            log.warn("Ошибка создания категории места: категория с ID {} уже существует", placeCategory.getId());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Категория с таким ID уже существует.");
-        }
-
-        kudaGoService.getPlaceCategoryStore().save(placeCategory);
-        log.info("Категория места с ID {} успешно создана", placeCategory.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body("Категория места успешно создана.");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updatePlaceCategory(@PathVariable int id, @RequestBody PlaceCategory placeCategory) {
-        if (placeCategory.getName() == null) {
-            log.error("Ошибка обновления категории места: название отсутствует (ID: {})", id);
-            return ResponseEntity.badRequest().body("Название обязательно.");
+        try {
+            placeCategoryService.updatePlaceCategory(id, placeCategory);
+            log.info("Категория места с id {} успешно обновлена", id);
+            return ResponseEntity.ok("Категория места успешно обновлена");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ElementWasNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        Optional<PlaceCategory> existingCategory = kudaGoService.getPlaceCategoryStore().get(id);
-        if (existingCategory.isEmpty()) {
-            log.warn("Ошибка обновления категории места: категория с ID {} не найдена", id);
-            return ResponseEntity.notFound().build();
-        }
-
-        placeCategory.setId(id);
-        kudaGoService.getPlaceCategoryStore().update(placeCategory);
-        log.info("Категория места с ID {} успешно обновлена", id);
-        return ResponseEntity.ok("Категория места успешно обновлена.");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePlaceCategory(@PathVariable int id) {
-        Optional<PlaceCategory> existingCategory = kudaGoService.getPlaceCategoryStore().get(id);
-        if (existingCategory.isEmpty()) {
-            log.warn("Ошибка удаления категории места: категория с ID {} не найдена", id);
-            return ResponseEntity.notFound().build();
+        try {
+            placeCategoryService.deletePlaceCategory(id);
+            log.info("Категория места с id {} успешно удалена", id);
+            return ResponseEntity.ok("Категория места успешно удалена");
+        } catch (ElementWasNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        kudaGoService.getPlaceCategoryStore().delete(id);
-        log.info("Категория места с ID {} успешно удалена", id);
-        return ResponseEntity.ok("Категория места успешно удалена.");
     }
 }
