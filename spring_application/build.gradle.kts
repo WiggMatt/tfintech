@@ -12,10 +12,10 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":my-aop-starter"))
     implementation(libs.spring.boot)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
-    implementation(libs.starter.aop)
 }
 
 tasks.test {

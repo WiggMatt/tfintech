@@ -1,4 +1,4 @@
-package ru.matthew.aspect;
+package ru.matthew.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

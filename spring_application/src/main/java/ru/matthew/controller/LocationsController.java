@@ -3,7 +3,7 @@ package ru.matthew.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.matthew.aspect.Timed;
+import ru.matthew.aop.Timed;
 import ru.matthew.dto.SuccessJsonDTO;
 import ru.matthew.model.Location;
 import ru.matthew.service.LocationService;

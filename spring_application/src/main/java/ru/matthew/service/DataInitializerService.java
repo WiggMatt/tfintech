@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import ru.matthew.aspect.Timed;
+import ru.matthew.aop.Timed;
 import ru.matthew.model.Location;
 import ru.matthew.model.PlaceCategory;
 
