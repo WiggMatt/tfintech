@@ -1,5 +1,6 @@
 package ru.matthew.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
@@ -8,12 +9,12 @@ import ru.matthew.model.Location;
 import ru.matthew.repository.InMemoryStore;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LocationService {
-    private final InMemoryStore<String, Location> locationStore = new InMemoryStore<>();
+    private final InMemoryStore<String, Location> locationStore;
 
     public Collection<Location> getAllLocations() {
         if (locationStore.getAll().isEmpty()) {
@@ -24,13 +25,12 @@ public class LocationService {
         return locationStore.getAll();
     }
 
-    public Optional<Location> getLocationBySlug(String slug) {
-        if (locationStore.get(slug).isEmpty()) {
-            log.warn("Ошибка поиска локации: локация с slug {} не найдена", slug);
-            throw new ElementWasNotFoundException("Локация с таким slug не найдена");
-        }
-
-        return locationStore.get(slug);
+    public Location getLocationBySlug(String slug) {
+        return locationStore.get(slug)
+                .orElseThrow(() -> {
+                    log.warn("Ошибка поиска локации: локация с slug {} не найдена", slug);
+                    return new ElementWasNotFoundException("Локация с таким slug не найдена");
+                });
     }
 
     public void createLocation(Location location) {

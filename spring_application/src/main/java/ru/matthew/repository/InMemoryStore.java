@@ -22,7 +22,7 @@ public class InMemoryStore<K, T extends Identifiable<K>> {
             K key = value.getKey();
             store.put(key, value);
         } else {
-            throw new IllegalArgumentException("Value must implement Identifiable interface");
+            throw new IllegalArgumentException("Value не может быть null!");
         }
     }
 
@@ -31,7 +31,7 @@ public class InMemoryStore<K, T extends Identifiable<K>> {
             K key = value.getKey();
             store.replace(key, value);
         } else {
-            throw new IllegalArgumentException("Value must implement Identifiable interface");
+            throw new IllegalArgumentException("Value не может быть null!");
         }
     }
 

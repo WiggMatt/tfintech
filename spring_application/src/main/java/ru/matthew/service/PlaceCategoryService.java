@@ -1,22 +1,20 @@
 package ru.matthew.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
-import ru.matthew.model.Location;
 import ru.matthew.model.PlaceCategory;
 import ru.matthew.repository.InMemoryStore;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PlaceCategoryService {
-    private final InMemoryStore<Integer, PlaceCategory> placeCategoryStore = new InMemoryStore<>();
+    private final InMemoryStore<Integer, PlaceCategory> placeCategoryStore;
 
     public Collection<PlaceCategory> getAllPlaceCategories() {
         if (placeCategoryStore.getAll().isEmpty()) {
@@ -27,13 +25,12 @@ public class PlaceCategoryService {
         return placeCategoryStore.getAll();
     }
 
-    public Optional<PlaceCategory> getPlaceCategoryById(int id) {
-        if (placeCategoryStore.get(id).isEmpty()) {
-            log.warn("Ошибка поиска категории локаций: категория с id {} не найдена", id);
-            throw new ElementWasNotFoundException("Категория с таким id не найдена");
-        }
-
-        return placeCategoryStore.get(id);
+    public PlaceCategory getPlaceCategoryById(int id) {
+        return placeCategoryStore.get(id)
+                .orElseThrow(() -> {
+                    log.warn("Ошибка поиска категории локаций: категория с id {} не найдена", id);
+                    return new ElementWasNotFoundException("Категория с таким id не найдена");
+                });
     }
 
     public void createPlaceCategory(PlaceCategory placeCategory) {
