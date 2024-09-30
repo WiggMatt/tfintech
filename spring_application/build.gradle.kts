@@ -19,6 +19,7 @@ dependencies {
     annotationProcessor(libs.lombok)
     testImplementation(libs.mockito)
     testImplementation(libs.junit.api)
+    testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.engine)
 }
 
