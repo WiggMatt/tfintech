@@ -1,9 +1,9 @@
-
 [versions]
 lombok = "1.18.30"
 jackson = "2.15.2"
 slf4j = "2.0.9"
 junit = "5.10.2"
+aspectjweaver = "1.9.7"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -13,3 +13,7 @@ slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+spring-boot = {module = "org.springframework.boot:spring-boot-starter-web"}
+starter-aop = {module = "org.springframework.boot:spring-boot-starter-aop"}
+spring-boot-autoconfigure = {module = "org.springframework.boot:spring-boot-autoconfigure"}
+aspectjweaver = {module = "org.aspectj:aspectjweaver", version.ref = "aspectjweaver"}
