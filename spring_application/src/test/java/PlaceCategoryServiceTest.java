@@ -163,6 +163,7 @@ public class PlaceCategoryServiceTest {
                 new PlaceCategory(2, "Updated Category", "valid-slug"),
                 new PlaceCategory(2, null, "valid-slug"),
                 new PlaceCategory(2, "Updated Category", null)
+
         );
     }
 
