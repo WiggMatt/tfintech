@@ -1,0 +1,8 @@
+[versions]
+lombok = "1.18.30"
+slf4j = "2.0.9"
+
+[libraries]
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+spring-boot = {module = "org.springframework.boot:spring-boot-starter-web"}
