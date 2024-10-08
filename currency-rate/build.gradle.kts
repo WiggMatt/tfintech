@@ -18,9 +18,15 @@ dependencies {
     annotationProcessor(libs.lombok)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
-    implementation("org.springframework.boot:spring-boot-starter-cache:3.3.4")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.4")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.ehcache:ehcache:3.10.8")
 }
 
 tasks.test {
