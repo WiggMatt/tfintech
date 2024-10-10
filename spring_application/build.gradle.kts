@@ -21,6 +21,12 @@ dependencies {
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.engine)
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:1.0-alpha-13")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.4")
+    testImplementation("org.testcontainers:testcontainers:1.20.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.1")
+    testImplementation("org.wiremock:wiremock:3.9.1")
 }
 
 tasks.test {

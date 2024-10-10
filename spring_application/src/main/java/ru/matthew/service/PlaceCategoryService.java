@@ -2,6 +2,7 @@ package ru.matthew.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
@@ -34,11 +35,8 @@ public class PlaceCategoryService {
     }
 
     public void createPlaceCategory(PlaceCategory placeCategory) {
-        if (placeCategory.getId() == 0 ||
-                placeCategory.getName() == null ||
-                placeCategory.getName().isEmpty() ||
-                placeCategory.getSlug() == null ||
-                placeCategory.getSlug().isEmpty()) {
+        if (StringUtils.isBlank(placeCategory.getName()) || StringUtils.isBlank(placeCategory.getSlug()) ||
+                placeCategory.getId() == 0) {
             log.error("Ошибка создания категории места: обязательные поля отсутствуют (id, name или slug)");
             throw new IllegalArgumentException("Поля id, name и slug обязательны");
         }
