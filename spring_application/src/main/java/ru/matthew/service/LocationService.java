@@ -34,7 +34,10 @@ public class LocationService {
     }
 
     public void createLocation(Location location) {
-        if (location.getName() == null || location.getSlug() == null) {
+        if (location.getName() == null ||
+                location.getName().isEmpty() ||
+                location.getSlug() == null ||
+                location.getSlug().isEmpty()) {
             log.error("Ошибка создания локации: обязательные поля отсутствуют (Name: {}, Slug: {})",
                     location.getName(), location.getSlug());
             throw new IllegalArgumentException("Название и slug обязательны");
