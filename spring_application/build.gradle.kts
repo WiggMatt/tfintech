@@ -21,6 +21,8 @@ dependencies {
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.engine)
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 }
 
 tasks.test {
