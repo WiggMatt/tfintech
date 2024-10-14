@@ -13,17 +13,20 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":my-aop-starter"))
     implementation(libs.spring.boot)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
-    testImplementation(libs.mockito)
-    testImplementation(libs.junit.api)
-    testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly(libs.junit.engine)
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.4")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.4")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.ehcache:ehcache:3.10.8")
 }
 
 tasks.test {
