@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import ru.matthew.dto.EventDTO;
 import ru.matthew.dto.EventResponseDTO;
 
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -20,42 +20,37 @@ public class EventService {
     @Value("${kudago.api.url}")
     private String kudaGoApiUrl;
 
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
     private final CurrencyConverterService currencyConverterService;
 
     @Autowired
-    public EventService(RestTemplate restTemplate, CurrencyConverterService currencyConverterService) {
-        this.restTemplate = restTemplate;
+    public EventService(WebClient.Builder webClientBuilder, CurrencyConverterService currencyConverterService) {
+        this.webClient = webClientBuilder.build();
         this.currencyConverterService = currencyConverterService;
     }
 
-    public CompletableFuture<EventResponseDTO> fetchEvents(double budget, String currency, String dateFrom, String dateTo) {
+    public Mono<EventResponseDTO> fetchEvents(double budget, String currency, String dateFrom, String dateTo) {
         log.info("Запрос событий с бюджетом: {} {}, с датами от {} до {}", budget, currency, dateFrom, dateTo);
 
         LocalDate[] dates = determineDates(dateFrom, dateTo);
         LocalDate fromDate = dates[0];
         LocalDate toDate = dates[1];
 
-        String requestUrl = String.format("%s?fields=id,title,description,place,dates,price&location=kzn&actual_since=%s&actual_until=%s",
-                kudaGoApiUrl,
+        String requestUrl = String.format("%s?fields=id,title,description,place,dates,price&location=kzn&actual_since=%s&actual_until=%s", kudaGoApiUrl,
                 fromDate.atStartOfDay(ZoneId.of("UTC")).toEpochSecond(),
                 toDate.atStartOfDay(ZoneId.of("UTC")).toEpochSecond());
 
         log.debug("Сформированный URL для запроса событий: {}", requestUrl);
 
-        CompletableFuture<List<EventDTO>> eventsFuture = fetchEventsAsync(requestUrl);
-        CompletableFuture<Double> budgetFuture = CompletableFuture.supplyAsync(() -> convertBudget(budget, currency));
+        Mono<List<EventDTO>> eventsMono = fetchEventsReactive(requestUrl);
+        Mono<Double> budgetMono = Mono.fromCallable(() -> convertBudget(budget, currency));
 
-        return eventsFuture
-                .thenCombine(budgetFuture, (events, budgetInRUB) -> {
+        return Mono.zip(eventsMono, budgetMono, (events, budgetInRUB) -> {
                     log.info("Получено {} событий, фильтрация по бюджету: {} RUB", events.size(), budgetInRUB);
                     List<EventDTO> suitableEvents = filterEventsByBudget(events, budgetInRUB);
                     return new EventResponseDTO(suitableEvents.size(), suitableEvents);
                 })
-                .exceptionally(e -> {
-                    log.error("Ошибка при получении событий: {}", e.getMessage(), e);
-                    return new EventResponseDTO(0, List.of());
-                });
+                .onErrorReturn(new EventResponseDTO(0, List.of())); // Обработка ошибок
     }
 
     private LocalDate[] determineDates(String dateFrom, String dateTo) {
@@ -74,12 +69,18 @@ public class EventService {
         return new LocalDate[]{fromDate, toDate};
     }
 
-    private CompletableFuture<List<EventDTO>> fetchEventsAsync(String requestUrl) {
-        return CompletableFuture.supplyAsync(() -> {
-            log.debug("Запрос событий по URL: {}", requestUrl);
-            EventResponseDTO response = restTemplate.getForObject(requestUrl, EventResponseDTO.class);
-            return response != null ? response.getResults() : List.of();
-        });
+    private Mono<List<EventDTO>> fetchEventsReactive(String requestUrl) {
+        return webClient.get()
+                .uri(requestUrl)
+                .retrieve()
+                .bodyToMono(EventResponseDTO.class)
+                .flatMap(response -> {
+                    if (response != null && response.getResults() != null) {
+                        return Mono.just(response.getResults());
+                    }
+                    return Mono.just(List.<EventDTO>of());
+                })
+                .doOnError(e -> log.error("Ошибка при запросе событий: {}", e.getMessage(), e));
     }
 
     private List<EventDTO> filterEventsByBudget(List<EventDTO> events, double budgetInRUB) {

@@ -23,6 +23,7 @@ dependencies {
     testRuntimeOnly(libs.junit.engine)
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.4")
 }
 
 tasks.test {
