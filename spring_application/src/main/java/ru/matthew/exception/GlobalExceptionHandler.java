@@ -64,4 +64,11 @@ public class GlobalExceptionHandler {
                 .headers(headers)
                 .body(new ErrorJsonDTO("Service Unavailable", e.getMessage()));
     }
+
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<ErrorJsonDTO> handleRateLimitExceededException(RateLimitExceededException e) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ErrorJsonDTO("Too Many Requests", e.getMessage()));
+    }
 }

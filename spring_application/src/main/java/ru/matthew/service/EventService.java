@@ -22,21 +22,23 @@ public class EventService {
 
     private final WebClient webClient;
     private final CurrencyConverterService currencyConverterService;
+    private final RateLimiter rateLimiter;
+
 
     @Autowired
-    public EventService(WebClient.Builder webClientBuilder, CurrencyConverterService currencyConverterService) {
+    public EventService(WebClient.Builder webClientBuilder, CurrencyConverterService currencyConverterService, RateLimiter rateLimiter) {
         this.webClient = webClientBuilder.build();
         this.currencyConverterService = currencyConverterService;
+        this.rateLimiter = rateLimiter;
     }
 
     public Mono<EventResponseDTO> fetchEvents(double budget, String currency, String dateFrom, String dateTo) {
-        log.info("Запрос событий с бюджетом: {} {}, с датами от {} до {}", budget, currency, dateFrom, dateTo);
-
         LocalDate[] dates = determineDates(dateFrom, dateTo);
         LocalDate fromDate = dates[0];
         LocalDate toDate = dates[1];
 
-        String requestUrl = String.format("%s?fields=id,title,description,place,dates,price&location=kzn&actual_since=%s&actual_until=%s", kudaGoApiUrl,
+        String requestUrl = String.format("%s?fields=id,title,description,place,dates,price&location=kzn&actual_since=%s&actual_until=%s",
+                kudaGoApiUrl,
                 fromDate.atStartOfDay(ZoneId.of("UTC")).toEpochSecond(),
                 toDate.atStartOfDay(ZoneId.of("UTC")).toEpochSecond());
 
@@ -50,7 +52,7 @@ public class EventService {
                     List<EventDTO> suitableEvents = filterEventsByBudget(events, budgetInRUB);
                     return new EventResponseDTO(suitableEvents.size(), suitableEvents);
                 })
-                .onErrorReturn(new EventResponseDTO(0, List.of())); // Обработка ошибок
+                .onErrorReturn(new EventResponseDTO(0, List.of()));
     }
 
     private LocalDate[] determineDates(String dateFrom, String dateTo) {
@@ -62,15 +64,15 @@ public class EventService {
             fromDate = LocalDate.parse(dateFrom);
             toDate = LocalDate.parse(dateTo);
         } else {
-            fromDate = today.with(ChronoField.DAY_OF_WEEK, 1); // Понедельник
-            toDate = today.with(ChronoField.DAY_OF_WEEK, 7); // Воскресенье
+            fromDate = today.with(ChronoField.DAY_OF_WEEK, 1);
+            toDate = today.with(ChronoField.DAY_OF_WEEK, 7);
         }
         log.debug("Определенные даты: от {} до {}", fromDate, toDate);
         return new LocalDate[]{fromDate, toDate};
     }
 
     private Mono<List<EventDTO>> fetchEventsReactive(String requestUrl) {
-        return webClient.get()
+        return Mono.fromCallable(() -> rateLimiter.executeWithLimit(() -> webClient.get()
                 .uri(requestUrl)
                 .retrieve()
                 .bodyToMono(EventResponseDTO.class)
@@ -80,7 +82,8 @@ public class EventService {
                     }
                     return Mono.just(List.<EventDTO>of());
                 })
-                .doOnError(e -> log.error("Ошибка при запросе событий: {}", e.getMessage(), e));
+                .doOnError(e -> log.error("Ошибка при запросе событий: {}", e.getMessage(), e))
+                .block())).flatMap(Mono::just);
     }
 
     private List<EventDTO> filterEventsByBudget(List<EventDTO> events, double budgetInRUB) {
