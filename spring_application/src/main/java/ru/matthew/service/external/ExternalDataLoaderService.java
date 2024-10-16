@@ -1,4 +1,4 @@
-package ru.matthew.service;
+package ru.matthew.service.external;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

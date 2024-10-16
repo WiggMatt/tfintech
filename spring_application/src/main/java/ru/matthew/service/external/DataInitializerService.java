@@ -1,4 +1,4 @@
-package ru.matthew.service;
+package ru.matthew.service.external;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +10,8 @@ import ru.matthew.aop.Timed;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.model.Location;
 import ru.matthew.model.PlaceCategory;
+import ru.matthew.service.LocationService;
+import ru.matthew.service.PlaceCategoryService;
 
 import java.time.Duration;
 import java.util.List;

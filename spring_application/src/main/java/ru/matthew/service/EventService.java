@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.matthew.dto.EventDTO;
 import ru.matthew.dto.EventResponseDTO;
+import ru.matthew.utils.RateLimiter;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -21,15 +22,15 @@ public class EventService {
     private String kudaGoApiUrl;
 
     private final WebClient webClient;
-    private final CurrencyConverterService currencyConverterService;
     private final RateLimiter rateLimiter;
+    private final CurrencyRateClient currencyRateClient;
 
 
     @Autowired
-    public EventService(WebClient.Builder webClientBuilder, CurrencyConverterService currencyConverterService, RateLimiter rateLimiter) {
+    public EventService(WebClient.Builder webClientBuilder, RateLimiter rateLimiter, CurrencyRateClient currencyRateClient) {
         this.webClient = webClientBuilder.build();
-        this.currencyConverterService = currencyConverterService;
         this.rateLimiter = rateLimiter;
+        this.currencyRateClient = currencyRateClient;
     }
 
     public Mono<EventResponseDTO> fetchEvents(double budget, String currency, String dateFrom, String dateTo) {
@@ -108,6 +109,7 @@ public class EventService {
 
     private double convertBudget(double budget, String currency) {
         log.debug("Конвертация бюджета {} {} в RUB", budget, currency);
-        return currencyConverterService.convertCurrency(currency, "RUB", budget);
+        return currencyRateClient.convertCurrency(currency, "RUB", budget);
     }
 }
+

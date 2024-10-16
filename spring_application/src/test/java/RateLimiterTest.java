@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.matthew.exception.RateLimitExceededException;
-import ru.matthew.service.RateLimiter;
+import ru.matthew.utils.RateLimiter;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
