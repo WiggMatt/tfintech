@@ -14,14 +14,12 @@ public class CurrencyRateClient {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8080").build();
     }
 
-    public double convertCurrency(String fromCurrency, String toCurrency, double amount) {
-        Mono<CurrencyConversionResponse> responseMono = webClient.post()
+    public Mono<Double> convertCurrency(String fromCurrency, String toCurrency, double amount) {
+        return webClient.post()
                 .uri("/currencies/convert")
                 .bodyValue(new CurrencyConversionRequest(fromCurrency, toCurrency, amount))
                 .retrieve()
-                .bodyToMono(CurrencyConversionResponse.class);
-
-        CurrencyConversionResponse response = responseMono.block();
-        return response.getConvertedAmount();
+                .bodyToMono(CurrencyConversionResponse.class)
+                .map(CurrencyConversionResponse::getConvertedAmount);
     }
 }

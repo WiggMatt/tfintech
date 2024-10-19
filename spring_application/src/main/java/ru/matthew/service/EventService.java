@@ -1,5 +1,6 @@
 package ru.matthew.service;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,10 +9,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.matthew.dto.EventDTO;
 import ru.matthew.dto.EventResponseDTO;
+import ru.matthew.exception.*;
 import ru.matthew.utils.RateLimiter;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
@@ -46,14 +49,22 @@ public class EventService {
         log.debug("Сформированный URL для запроса событий: {}", requestUrl);
 
         Mono<List<EventDTO>> eventsMono = fetchEventsReactive(requestUrl);
-        Mono<Double> budgetMono = Mono.fromCallable(() -> convertBudget(budget, currency));
+        Mono<Double> budgetMono = convertBudget(budget, currency);
 
         return Mono.zip(eventsMono, budgetMono, (events, budgetInRUB) -> {
                     log.info("Получено {} событий, фильтрация по бюджету: {} RUB", events.size(), budgetInRUB);
                     List<EventDTO> suitableEvents = filterEventsByBudget(events, budgetInRUB);
                     return new EventResponseDTO(suitableEvents.size(), suitableEvents);
                 })
-                .onErrorReturn(new EventResponseDTO(0, List.of()));
+                .onErrorMap(e -> {
+                    if (e instanceof RateLimitExceededException) {
+                        return e;
+                    } else if (e instanceof CurrencyNotFoundException) {
+                        return e;
+                    } else {
+                        return new ServiceUnavailableException("Ошибка при взаимодействии с внешним сервисом", 3600);
+                    }
+                });
     }
 
     private LocalDate[] determineDates(String dateFrom, String dateTo) {
@@ -61,13 +72,18 @@ public class EventService {
         LocalDate fromDate;
         LocalDate toDate;
 
-        if (dateFrom != null && !dateFrom.isEmpty() && dateTo != null && !dateTo.isEmpty()) {
+        if (!StringUtils.isBlank(dateFrom) && !StringUtils.isBlank(dateTo)) {
             fromDate = LocalDate.parse(dateFrom);
             toDate = LocalDate.parse(dateTo);
         } else {
             fromDate = today.with(ChronoField.DAY_OF_WEEK, 1);
             toDate = today.with(ChronoField.DAY_OF_WEEK, 7);
         }
+
+        if (fromDate.isAfter(toDate)) {
+            throw new InvalidDateRangeException("Дата начала не может быть позже даты окончания.");
+        }
+
         log.debug("Определенные даты: от {} до {}", fromDate, toDate);
         return new LocalDate[]{fromDate, toDate};
     }
@@ -84,7 +100,8 @@ public class EventService {
                     return Mono.just(List.<EventDTO>of());
                 })
                 .doOnError(e -> log.error("Ошибка при запросе событий: {}", e.getMessage(), e))
-                .block())).flatMap(Mono::just);
+                .block())).onErrorMap(e -> new ServiceUnavailableException("Ошибка при запросе событий в KudaGo API", 3600));
+
     }
 
     private List<EventDTO> filterEventsByBudget(List<EventDTO> events, double budgetInRUB) {
@@ -107,9 +124,17 @@ public class EventService {
         }
     }
 
-    private double convertBudget(double budget, String currency) {
+    private Mono<Double> convertBudget(double budget, String currency) {
         log.debug("Конвертация бюджета {} {} в RUB", budget, currency);
-        return currencyRateClient.convertCurrency(currency, "RUB", budget);
+        return currencyRateClient.convertCurrency(currency, "RUB", budget)
+                .onErrorMap(CurrencyNotFoundException.class, ex -> {
+                    throw new CurrencyNotFoundException("Валюта не найдена: " + currency);
+                })
+                .onErrorMap(UnsupportedCurrencyException.class, ex ->
+                        new UnsupportedCurrencyException("Валюта не поддерживается: " + currency))
+                .onErrorMap(ServiceUnavailableException.class, ex ->
+                        new ServiceUnavailableException("Ошибка при взаимодействии с внешним сервисом", 3600)
+                );
     }
 }
 

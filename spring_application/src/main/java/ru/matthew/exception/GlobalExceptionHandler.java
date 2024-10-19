@@ -71,4 +71,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.TOO_MANY_REQUESTS)
                 .body(new ErrorJsonDTO("Too Many Requests", e.getMessage()));
     }
+
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ResponseEntity<ErrorJsonDTO> handleInvalidDateRangeException(InvalidDateRangeException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorJsonDTO("Invalid Date Range", e.getMessage()));
+    }
 }

@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventRequestDTO {
-    @NotNull(message = "Параметр budget обязательный и не моджет быть пустым")
+    @NotNull(message = "Параметр budget обязательный и не может быть пустым")
     @Positive(message = "Параметр budget не может быть меньше 0")
     private double budget;
-    @NotBlank(message = "Параметр currency обязательный и не моджет быть пустым")
+    @NotBlank(message = "Параметр currency обязательный и не может быть пустым")
     private String currency;
     private String dateFrom;
     private String dateTo;

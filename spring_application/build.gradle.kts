@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.4")
+    testImplementation("io.projectreactor:reactor-test:3.6.9")
 }
 
 tasks.test {
