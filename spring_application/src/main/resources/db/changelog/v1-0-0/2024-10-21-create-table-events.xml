@@ -13,7 +13,7 @@
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="date" type="TIMESTAMP">
+            <column name="date" type="DATE" defaultValueComputed="CURRENT_DATE">
                 <constraints nullable="false"/>
             </column>
             <column name="location_id" type="VARCHAR(255)">
@@ -31,7 +31,8 @@
                                  baseColumnNames="location_id"
                                  referencedTableName="locations"
                                  referencedColumnNames="slug"
-                                 constraintName="fk_events_locations"/>
+                                 constraintName="fk_events_locations"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>
