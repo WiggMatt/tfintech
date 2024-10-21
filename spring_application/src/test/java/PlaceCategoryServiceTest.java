@@ -5,8 +5,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
-import ru.matthew.model.PlaceCategory;
-import ru.matthew.repository.InMemoryStore;
+import ru.matthew.dao.model.PlaceCategory;
+import ru.matthew.dao.repository.InMemoryStore;
 import ru.matthew.service.PlaceCategoryService;
 
 import java.util.Collections;

@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 import org.wiremock.integrations.testcontainers.WireMockContainer;
 import ru.matthew.SpringApplication;
 import ru.matthew.dto.SuccessJsonDTO;
-import ru.matthew.model.Location;
+import ru.matthew.dao.model.Location;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;

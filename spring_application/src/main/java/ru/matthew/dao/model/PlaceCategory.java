@@ -1,4 +1,4 @@
-package ru.matthew.model;
+package ru.matthew.dao.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

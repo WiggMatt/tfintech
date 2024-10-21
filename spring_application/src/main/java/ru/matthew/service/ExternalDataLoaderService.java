@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import ru.matthew.model.Location;
-import ru.matthew.model.PlaceCategory;
+import ru.matthew.dao.model.Location;
+import ru.matthew.dao.model.PlaceCategory;
 
 import java.util.Arrays;
 import java.util.Collections;

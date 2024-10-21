@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
-import ru.matthew.model.Location;
-import ru.matthew.repository.InMemoryStore;
+import ru.matthew.dao.model.Location;
+import ru.matthew.dao.repository.InMemoryStore;
 
 import java.util.Collection;
 

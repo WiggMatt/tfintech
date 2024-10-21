@@ -2,9 +2,9 @@ package ru.matthew.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.matthew.model.Location;
-import ru.matthew.model.PlaceCategory;
-import ru.matthew.repository.InMemoryStore;
+import ru.matthew.dao.model.Location;
+import ru.matthew.dao.model.PlaceCategory;
+import ru.matthew.dao.repository.InMemoryStore;
 
 @Configuration
 public class DataSourceConfig {

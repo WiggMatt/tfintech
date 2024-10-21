@@ -6,8 +6,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.matthew.aop.Timed;
-import ru.matthew.model.Location;
-import ru.matthew.model.PlaceCategory;
+import ru.matthew.dao.model.Location;
+import ru.matthew.dao.model.PlaceCategory;
 
 import java.util.List;
 
@@ -32,7 +32,6 @@ public class DataInitializerService {
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
         log.info("Начало инициализации данных");
-
         try {
             initCategories();
             initLocations();

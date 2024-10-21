@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
-import ru.matthew.model.PlaceCategory;
-import ru.matthew.repository.InMemoryStore;
+import ru.matthew.dao.model.PlaceCategory;
+import ru.matthew.dao.repository.InMemoryStore;
 
 import java.util.Collection;
 

@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.aop.Timed;
 import ru.matthew.dto.SuccessJsonDTO;
-import ru.matthew.model.PlaceCategory;
+import ru.matthew.dao.model.PlaceCategory;
 import ru.matthew.service.PlaceCategoryService;
 
 import java.util.Collection;

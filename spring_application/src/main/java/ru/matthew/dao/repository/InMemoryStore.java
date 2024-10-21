@@ -1,6 +1,6 @@
-package ru.matthew.repository;
+package ru.matthew.dao.repository;
 
-import ru.matthew.model.Identifiable;
+import ru.matthew.dao.model.Identifiable;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Collection;
