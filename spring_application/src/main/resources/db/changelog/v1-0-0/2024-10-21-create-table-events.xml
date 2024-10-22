@@ -22,7 +22,7 @@
             <column name="description" type="TEXT">
                 <constraints nullable="true"/>
             </column>
-            <column name="price" type="VARCHAR(255)">
+            <column name="price" type="DECIMAL(10, 2)">
                 <constraints nullable="true"/>
             </column>
         </createTable>

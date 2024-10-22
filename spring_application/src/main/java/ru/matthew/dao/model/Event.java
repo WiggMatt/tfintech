@@ -1,10 +1,13 @@
 package ru.matthew.dao.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,9 +22,10 @@ public class Event {
     @Column(nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate date;
     private String description;
-    private Double price;
+    private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
-    private Location locations;
+    @JsonBackReference
+    private Location location;
 }

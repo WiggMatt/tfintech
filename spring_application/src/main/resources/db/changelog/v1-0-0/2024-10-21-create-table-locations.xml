@@ -8,7 +8,7 @@
     <changeSet id="1" author="konyukhov.matt@yandex.ru">
         <createTable tableName="locations">
             <column name="slug" type="VARCHAR(255)">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
