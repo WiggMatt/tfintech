@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2" author="konyukhov.matt@yandex.ru">
+        <createTable tableName="events">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="DATE" defaultValueComputed="CURRENT_DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="price" type="DECIMAL(10, 2)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="events"
+                                 baseColumnNames="location_id"
+                                 referencedTableName="locations"
+                                 referencedColumnNames="slug"
+                                 constraintName="fk_events_locations"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
