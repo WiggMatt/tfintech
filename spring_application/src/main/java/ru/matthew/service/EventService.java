@@ -58,6 +58,7 @@ public class EventService {
                 event.getTitle(),
                 event.getDate(),
                 event.getLocation().getSlug());
+
         if (eventExists) {
             log.warn("Ошибка создания события: событие с названием '{}' уже существует в локации '{}' на дату '{}'",
                     event.getTitle(), event.getLocation().getSlug(), event.getDate());

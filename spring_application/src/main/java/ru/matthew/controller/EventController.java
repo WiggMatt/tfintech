@@ -1,5 +1,6 @@
 package ru.matthew.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,10 +39,10 @@ public class EventController {
 
     // Создание нового события
     @PostMapping
-    public SuccessJsonDTO createEvent(@RequestBody Event event) {
+    public SuccessJsonDTO createEvent(@Valid @RequestBody Event event) {
         eventService.createEvent(event);
         log.info("Событие с ID {} успешно создано", event.getId());
-        return new SuccessJsonDTO("Локация успешно создана");
+        return new SuccessJsonDTO("Событие успешно создано");
     }
 
     // Обновление события
